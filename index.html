@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<title>Ще бъдеш ли моята Валентина? ❤️</title>
+<style>
+html, body {
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    font-family:Arial, sans-serif;
+    background: linear-gradient(135deg,#ffe6ec,#ffd1dc);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    flex-direction:column;
+}
+
+.container {
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+}
+
+h1 {
+    color:#ff2e63;
+    font-size:42px;
+    margin-bottom:20px;
+}
+
+.buttons {
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-top:20px;
+    z-index:2;
+}
+
+button {
+    padding:15px 30px;
+    font-size:20px;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+#yesBtn {
+    background:#28c76f;
+    color:white;
+}
+
+#yesBtn:hover {
+    transform:scale(1.1);
+}
+
+#noBtn {
+    background:#ff4d4d;
+    color:white;
+    position:absolute;
+    z-index:2;
+}
+
+#message {
+    margin-top:20px;
+    font-size:34px;
+    color:#ff2e63;
+    white-space: nowrap;
+}
+
+.floating {
+    position:absolute;
+    font-size:24px;
+    animation: floatUp 4s linear forwards;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(0); opacity:1; }
+    to { transform: translateY(-800px); opacity:0; }
+}
+
+.confetti {
+    position:absolute;
+    width:10px;
+    height:10px;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to { transform: translateY(110vh) rotate(720deg); }
+}
+
+#catGif, #picture {
+    display:none;
+    border-radius:15px;
+    max-width:200px;
+    margin-top:20px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1 id="title">Ще бъдеш ли моята Валентинка, ВИКИ? ❤️</h1>
+    <div class="buttons">
+        <button id="yesBtn">ДА 😍</button>
+    </div>
+    <button id="noBtn">НЕ 😢</button>
+    <div id="message"></div>
+    
+    <!-- Снимка на вас -->
+    <img id="picture" src="your-photo.jpg" alt="Снимка на нас">
+    <!-- Котешки GIF -->
+    <img id="catGif" src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif" alt="Сладка котка">
+</div>
+
+<script>
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const message = document.getElementById("message");
+const container = document.querySelector(".container");
+const picture = document.getElementById("picture");
+const catGif = document.getElementById("catGif");
+
+let yesScale = 1;
+
+// Забавни психологически текстове за НЕ
+const noTexts = [
+    "Сигурен ли си?? 🤨",
+    "БУТОН ДА изглежда по-сладък 😏",
+    "Хайде, ясно е ❤️",
+    "Не ме тествай! 😜",
+    "Наистина?? 😆",
+    "Помисли пак! 😂"
+];
+let noTextIndex = 0;
+
+// Начална позиция на НЕ до ДА
+const initialNoPosition = () => {
+    const rect = yesBtn.getBoundingClientRect();
+    noBtn.style.left = (rect.right + 20) + "px";
+    noBtn.style.top = rect.top + "px";
+};
+window.onload = initialNoPosition;
+window.onresize = initialNoPosition;
+
+// NO hover behavior: move **4x more** around center
+noBtn.addEventListener("mouseover", () => {
+    // Смяна на текст
+    noBtn.innerText = noTexts[noTextIndex];
+    noTextIndex = (noTextIndex + 1) % noTexts.length;
+
+    // YES бутона расте
+    yesScale += 0.5;
+    yesBtn.style.transform = `scale(${yesScale})`;
+
+    // Преместване на НЕ около центъра
+    const centerX = window.innerWidth / 2 - noBtn.offsetWidth / 2;
+    const centerY = window.innerHeight / 2 - noBtn.offsetHeight / 2;
+    const offsetX = (Math.random() - 0.5) * 480; // ±240px
+    const offsetY = (Math.random() - 0.5) * 480; // ±240px
+    noBtn.style.position = "absolute";
+    noBtn.style.left = Math.min(Math.max(centerX + offsetX, 10), window.innerWidth - noBtn.offsetWidth - 10) + "px";
+    noBtn.style.top = Math.min(Math.max(centerY + offsetY, 10), window.innerHeight - noBtn.offsetHeight - 10) + "px";
+});
+
+// ДА кликнато
+yesBtn.addEventListener("click", () => {
+    message.innerHTML = "ЙЕЙ ❤️ ОБИЧАМ ТЕ БУБУ!!";
+
+    // Премахване на бутоните
+    yesBtn.style.display = "none";
+    noBtn.style.display = "none";
+
+    createConfetti();
+    startFloatingHearts();
+    createFlowers();
+    picture.style.display = "block";
+    catGif.style.display = "block";
+});
+
+// Конфети
+function createConfetti() {
+    for(let i=0;i<120;i++){
+        const conf = document.createElement("div");
+        conf.className = "confetti";
+        conf.style.left = Math.random()*100 + "vw";
+        conf.style.top = "-10px";
+        conf.style.background = `hsl(${Math.random()*360},100%,50%)`;
+        conf.style.animationDuration = (Math.random()*3+2)+"s";
+        document.body.appendChild(conf);
+        setTimeout(()=>conf.remove(),5000);
+    }
+}
+
+// Плаващи сърца/цветя
+function startFloatingHearts() {
+    const emojis = ["❤️","💖","💕","🌸","🌺","💘"];
+    setInterval(()=>{
+        const el = document.createElement("div");
+        el.className = "floating";
+        el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+        el.style.left = Math.random()*100 + "vw";
+        el.style.bottom = "0px";
+        el.style.fontSize = (Math.random()*20+20)+"px";
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(),4000);
+    },300);
+}
+
+// Цветя след ДА кликнато
+function createFlowers() {
+    const emojis = ["🌸","🌺","💐","🌼"];
+    for(let i=0;i<50;i++){
+        const el = document.createElement("div");
+        el.className = "floating";
+        el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+        el.style.left = Math.random()*100 + "vw";
+        el.style.bottom = "0px";
+        el.style.fontSize = (Math.random()*25+15)+"px";
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(),5000);
+    }
+}
+</script>
+
+</body>
+</html>
